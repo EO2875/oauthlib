@@ -19,7 +19,7 @@ from .errors import (
     MissingTokenError, MissingTokenTypeError, raise_from_error,
 )
 from .tokens import OAuth2Token
-from .utils import is_secure_transport, list_to_scope, scope_to_list
+from .utils import is_secure_transport, list_to_scope, scope_to_list, str_to_timeseconds
 
 
 def prepare_grant_uri(uri, client_id, response_type, redirect_uri=None,
@@ -331,6 +331,9 @@ def parse_implicit_response(uri, state=None, scope=None):
     if 'expires_in' in params:
         params['expires_at'] = time.time() + int(params['expires_in'])
 
+    if 'expires_at' in params and not 'expires_in' in params:
+        params['expires_at'] = str_to_timeseconds(params['expires_at'])
+
     if state and params.get('state', None) != state:
         raise ValueError("Mismatching or missing state in params.")
 
@@ -420,6 +423,9 @@ def parse_token_response(body, scope=None):
             params.pop('expires_in')
         else:
             params['expires_at'] = time.time() + int(params['expires_in'])
+
+    if 'expires_at' in params and not 'expires_in' in params:
+        params['expires_at'] = str_to_timeseconds(params['expires_at'])
 
     params = OAuth2Token(params, old_scope=scope)
     validate_token_parameters(params)

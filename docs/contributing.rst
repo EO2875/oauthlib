@@ -140,7 +140,8 @@ Run the tests!
 --------------
 
 Before you submit a pull request, please run the entire OAuthLib test suite from
-the project root via:
+the project root via `pytest
+<https://docs.pytest.org>`_:
 
 .. sourcecode:: bash
 

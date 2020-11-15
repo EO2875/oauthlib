@@ -6,6 +6,7 @@ This module contains utility methods used by various parts of the OAuth 2 spec.
 """
 import datetime
 import os
+import time
 from urllib.parse import quote, urlparse
 
 from oauthlib.common import urldecode
@@ -74,6 +75,25 @@ def generate_age(issue_time):
     age = (td.microseconds + (td.seconds + td.days * 24 * 3600)
            * 10 ** 6) / 10 ** 6
     return str(age)
+
+
+def str_to_timeseconds(string):
+    """ Pareses the string as an `int` or as an ISO 8601 string
+
+    :param string: an integer string or an ISO 8601 string.
+    :returns: `int` time in seconds since the epoch
+    """
+    try:
+        return int(string)
+    except ValueError:
+        try :
+            date_time = time.strptime(string, "%Y-%m-%dT%H:%M:%SZ")
+            return int(time.mktime(date_time))
+        except ValueError:
+            raise ValueError(
+                "time data '"+ string +"' is both an invalid literal for int() with base 10 "
+                + "and does not match ISO 8601 format (%Y-%m-%dT%H:%M:%SZ)"
+            )
 
 
 def is_secure_transport(uri):

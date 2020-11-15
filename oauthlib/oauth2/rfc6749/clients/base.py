@@ -18,7 +18,7 @@ from oauthlib.oauth2.rfc6749.parameters import (
     parse_token_response, prepare_token_request,
     prepare_token_revocation_request,
 )
-from oauthlib.oauth2.rfc6749.utils import is_secure_transport
+from oauthlib.oauth2.rfc6749.utils import is_secure_transport, str_to_timeseconds
 
 AUTH_HEADER = 'auth_header'
 URI_QUERY = 'query'
@@ -513,7 +513,7 @@ class Client:
             self._expires_at = time.time() + int(self.expires_in)
 
         if 'expires_at' in response:
-            self._expires_at = int(response.get('expires_at'))
+            self._expires_at = str_to_timeseconds(response.get('expires_at'))    
 
         if 'mac_key' in response:
             self.mac_key = response.get('mac_key')
